@@ -86,6 +86,10 @@ class Muller:
         self.x1 = self.x2
         self.x2 = self.x3
 
+        # Repetiremos el proceso mientras el error obtenido sea mayor que el solicitado
+        while self.currentError > self.ex:
+            self.findIterations()
+
     def saveValuesToList(self):
         print("x0: ", self.x0)
         print("x1: ", self.x1)
@@ -99,7 +103,7 @@ class Muller:
         print("c: ", self.c)
         print("x3: ", self.x3)
         print("E: ", self.currentError)
-
+        print("*" * 50)
 
 
 def main():
@@ -111,7 +115,6 @@ def main():
 
     m = Muller(fx, x0, x1, x2, ex)
     m.findIterations()
-
 
 if __name__ == "__main__":
     main()

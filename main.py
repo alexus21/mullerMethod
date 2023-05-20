@@ -33,40 +33,60 @@ class Muller:
     def evalFunctions(self):
         # Evaluar los f(xn)
         self.fx = sympify(self.fx)
-        self.fx0 = self.fx.subs(self.x, self.x0)
-        self.fx1 = self.fx.subs(self.x, self.x1)
+        self.fx0 = round(self.fx.subs(self.x, self.x0), 5)
+        self.fx1 = round(self.fx.subs(self.x, self.x1), 5)
+        self.fx2 = round(self.fx.subs(self.x, self.x2), 5)
+
+        print("fx0: ", self.fx0)
+        print("fx1", self.fx1)
 
         # Obtener los valores para h
         self.h0 = self.x1 - self.x0
         self.h1 = self.x2 - self.x1
 
+        print("h0: ", self.h0)
+        print("h1: ", self.h1)
+
         # Obtener los valores de sigma
         self.s0 = (self.fx1 - self.fx0)/(self.x1 - self.x0)
         self.s1 = (self.fx2 - self.fx1)/(self.x2 - self.x1)
 
+        self.s0 = round(self.s0, 5)
+        self.s1 = round(self.s1, 5)
+
+        print("s0: ", self.s0)
+        print("s1: ", self.s1)
+
         # Obtener el valor de a:
-        self.a = (self.s1 - self.s0)/(self.h0 - self.h1)
+        self.a = (self.s1 - self.s0)/(self.h1 - self.h0)
+        self.a = round(self.a, 5)
 
         # Obtener el valor de b:
         self.b = (self.a*self.h1) + self.s1
+        self.b = round(self.b, 5)
 
         # Obtener c:
         self.c = self.fx.subs(self.x, self.x2)
+        self.c = round(self.c, 5)
+
+        print("a: ", self.a)
+        print("b: ", self.b)
+        print("c: ", self.c)
 
 
     def findNewValue(self):
         if self.b > 0:
-            self.x2 + (-2*self.c)/(self.b + sqrt(pow(self.b, 2) - 4*self.a*self.c))
+            self.x3 = self.x2 + (-2*self.c)/(self.b + sqrt(pow(self.b, 2) - 4*self.a*self.c))
         else:
-            self.x2 + (-2 * self.c) / (self.b - sqrt(pow(self.b, 2) - 4 * self.a * self.c))
+            self.x3 = self.x2 + (-2 * self.c) / (self.b - sqrt(pow(self.b, 2) - 4 * self.a * self.c))
 
 
     def printResult(self):
-        print(self.x3)
+        print("x3: ", str(self.x3))
 
 
 def main():
-    fx = str(input("Ingresa la función a evaluar (en términos de x): "))
+    fx = input("Ingresa la función a evaluar (en términos de x): ")
     x0 = float(input("Ingresa el valor de X0: "))
     x1 = float(input("Ingresa el valor de X1: "))
     x2 = float(input("Ingresa el valor de X2: "))

@@ -24,11 +24,13 @@ class Muller:
 
         self._iteracion = 0
 
+
     def _valoresImagen(self):
-        self._fx = sympify(self._fx)
-        self._fx0 = self._fx.subs(self._x, self._x0)
-        self._fx1 = self._fx.subs(self._x, self._x1)
-        self._fx2 = self._fx.subs(self._x, self._x2)
+        # self._fx = sympify(self._fx)
+        # self._fx0 = self._fx.subs(self._x, self._x0)
+        # self._fx1 = self._fx.subs(self._x, self._x1)
+        # self._fx2 = self._fx.subs(self._x, self._x2)
+        pass
 
     def _valoresHi(self):
         self._h0 = self._x1 - self._x0
@@ -48,6 +50,7 @@ class Muller:
         self._x1 = self._x2
         self._x2 = self._x3
         self._x3 = 0
+
     def _valores(self):
         self._valoresImagen()
         self._valoresHi()
@@ -70,6 +73,14 @@ class Muller:
         print("_"*40)
 
     def iteraciones(self):
+        self._fx = sympify(self._fx)
+        self._fx0 = self._fx.subs(self._x, self._x0)
+        self._fx1 = self._fx.subs(self._x, self._x1)
+        self._fx2 = self._fx.subs(self._x, self._x2)
+
+        xValues = np.array([self._x0, self._x1, self._x2])
+        fxValues = np.array([self._fx0, self._fx1, self._fx2])
+
         while self._errorActual > self._error:
             self._iteracion += 1
             self._valores()
@@ -83,6 +94,7 @@ class Muller:
             if raiz < 0:
                 print("No se puede resolver esta ecuacion", self._iteracion)
                 break
+
             d = sqrt(raiz)
             e = 0
 
@@ -93,13 +105,27 @@ class Muller:
 
             self._x3 = self._x2 - (2 * self._c) / e
 
+
             if self._x3 == 0:
                 print("Esta función no se puede operar por medio de este método")
                 break
 
+            fx3 = self._fx.subs(self._x, self._x3)
+            xValues = np.append(xValues, self._x3)
+            fxValues = np.append(fxValues, fx3)
+
             self._errorActual = abs((self._x3 - self._x2) / self._x3)
             self._valoresIteracion()
             self._reiniciarValores()
+
+        print(xValues)
+        print(fxValues)
+        self.sendValues(xValues, fxValues)
+    def sendValues(self, xValues, fxValues):
+
+        import graphics
+        g = graphics.Graphics(xValues, fxValues, self._fx)
+        g.createGraphics()
 
 def main():
     funcion = input("Ingrese la función a evaluar -> ")
@@ -110,5 +136,6 @@ def main():
 
     muller = Muller(funcion, x0, x1, x2, error)
     muller.iteraciones()
+
 
 main()

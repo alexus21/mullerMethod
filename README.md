@@ -29,3 +29,8 @@ Desarrollado por:
 - Uso de numpy, pandas y sympy
 - Vista gráfica del resultado con matplotlib
 - Resolución de cualquier ecuación
+
+## Previa
+!["Gráfica"](https://raw.githubusercontent.com/alexus21/mullerMethod/main/graphics.png)
+!["Iteraciones"](https://raw.githubusercontent.com/alexus21/mullerMethod/main/iterations.png)
+!["Pandas"](https://raw.githubusercontent.com/alexus21/mullerMethod/main/pandasTable.png)

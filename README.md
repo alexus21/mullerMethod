@@ -31,6 +31,11 @@ Desarrollado por:
 - Resolución de cualquier ecuación
 
 ## Previa
+### Vista gráfica: 
 !["Gráfica"](https://raw.githubusercontent.com/alexus21/mullerMethod/main/graphics.png)
+
+### Iteraciones: 
 !["Iteraciones"](https://raw.githubusercontent.com/alexus21/mullerMethod/main/iterations.png)
+
+### Tabla de iteraciones:
 !["Pandas"](https://raw.githubusercontent.com/alexus21/mullerMethod/main/pandasTable.png)

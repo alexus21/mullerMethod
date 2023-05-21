@@ -73,10 +73,16 @@ class Muller:
         self.c = self.fx2
 
     def findNewValue(self):
-        if self.b > 0:
-            self.x3 = round(self.x2 + (-2 * self.c) / (self.b + sqrt(pow(self.b, 2) - 4 * self.a * self.c)), 5)
+        d = sqrt(self.b**2 - 4*self.a*self.c)
+        e = 0
+        if abs(self.b + d) > abs(self.b - d):
+            e = self.b + d
+
         else:
-            self.x3 = round(self.x2 + (-2 * self.c) / (self.b - sqrt(pow(self.b, 2) - 4 * self.a * self.c)), 5)
+            e = self.b - d
+
+
+        self.x3 = round(self.x2 - (2 * self.c)/e)
 
     def findAproxError(self):
         self.currentError = abs(((self.x3 - self.x2) / self.x3) * 100)
@@ -116,5 +122,5 @@ def main():
     m = Muller(fx, x0, x1, x2, ex)
     m.findIterations()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

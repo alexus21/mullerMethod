@@ -1,126 +1,167 @@
+import math
+
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
 from sympy import *
-from math import sqrt, pow
-
 
 class Muller:
-    def __init__(self, fx, x0, x1, x2, ex):
-        self.fx = fx # Ecuación
-        self.x0 = x0 # Valor inicial de x
-        self.x1 = x1 # Valor medio de x
-        self.x2 = x2 # Valor final de x
-        self.ex = ex # Margen de error hasta el que se desea iterar
+    def __init__(self, fx, x0, x1, x2, error):
+        self._fx = fx
+        self._valoresIniciales = np.array([x0, x1, x2])
+        self._error = error
+        self._errorActual = 1
 
-        # Valores a calcular:
-        self.x3 = 0
-        self.h0 = 0
-        self.h1 = 0
-        self.fx0 = 0
-        self.fx1 = 0
-        self.fx2 = 0
-        self.s0 = 0
-        self.s1 = 0
-        self.a = 0
-        self.b = 0
-        self.c = 0
-        self.currentError = 0 # Margen de error de las iteraciones
+        self._x = symbols("x")
 
-        # Letra a emplear como variable:
-        self.x = symbols("x")
+        self._s0, self._s1 = 0, 0
 
-    def findIterations(self):
-        self.evalFunctions()
-        self.findHValues()
-        self.findSigmaValues()
-        self.findQEquationValues()
-        self.findNewValue()
-        self.findAproxError()
-        self.saveValuesToList()
-        self.resetValues()
+        self._fx0, self._fx1, self._fx2 = 0, 0, 0
 
-    def evalFunctions(self):
-        # Evaluar los f(xn)
-        self.fx = sympify(self.fx)
-        self.fx0 = round(self.fx.subs(self.x, self.x0), 5)
-        self.fx1 = round(self.fx.subs(self.x, self.x1), 5)
-        self.fx2 = round(self.fx.subs(self.x, self.x2), 5)
+        self._a, self._b, self._c = 0, 0, 0
 
-    def findHValues(self):
-        # Obtener los valores para h
-        self.h0 = self.x1 - self.x0
-        self.h1 = self.x2 - self.x1
+        self._h0, self._h1 = 0, 0
 
-    def findSigmaValues(self):
-        # Obtener los valores de sigma
-        self.s0 = (self.fx1 - self.fx0) / (self.x1 - self.x0)
-        self.s1 = (self.fx2 - self.fx1) / (self.x2 - self.x1)
+        self._x0, self._x1, self._x2, self._x3 = x0, x1, x2, 0
 
-        self.s0 = round(self.s0, 5)
-        self.s1 = round(self.s1, 5)
-
-    def findQEquationValues(self):
-        # Obtener el valor de a:
-        self.a = round((self.s1 - self.s0) / (self.h1 - self.h0), 5)
-
-        # Obtener el valor de b:
-        self.b = (self.a * self.h1) + self.s1
-        self.b = round(self.b, 5)
-
-        # Obtener c:
-        self.c = self.fx2
-
-    def findNewValue(self):
-        d = sqrt(self.b**2 - 4*self.a*self.c)
-        e = 0
-        if abs(self.b + d) > abs(self.b - d):
-            e = self.b + d
-
-        else:
-            e = self.b - d
+        self._iteracion = 0
 
 
-        self.x3 = round(self.x2 - (2 * self.c)/e)
+    def _valoresImagen(self):
+        # self._fx = sympify(self._fx)
+        # self._fx0 = self._fx.subs(self._x, self._x0)
+        # self._fx1 = self._fx.subs(self._x, self._x1)
+        # self._fx2 = self._fx.subs(self._x, self._x2)
+        pass
 
-    def findAproxError(self):
-        self.currentError = abs(((self.x3 - self.x2) / self.x3) * 100)
+    def _valoresHi(self):
+        self._h0 = self._x1 - self._x0
+        self._h1 = self._x2 - self._x1
 
-    def resetValues(self):
-        self.x0 = self.x1
-        self.x1 = self.x2
-        self.x2 = self.x3
+    def _valoresSigma(self):
+        self._s0 = (self._fx1 - self._fx0) / self._h0
+        self._s1 = (self._fx2 - self._fx1) / self._h1
 
-        # Repetiremos el proceso mientras el error obtenido sea mayor que el solicitado
-        while self.currentError > self.ex:
-            self.findIterations()
+    def _valoresEcuacion(self):
+        self._a = (self._s1 - self._s0) / (self._h1 - self._h0)
+        self._b = self._a * self._h1 + self._s1
+        self._c = self._fx2
 
-    def saveValuesToList(self):
-        print("x0: ", self.x0)
-        print("x1: ", self.x1)
-        print("x2: ", self.x2)
-        print("h0: ", self.h0)
-        print("h1: ", self.h1)
-        print("s0: ", self.s0)
-        print("s1: ", self.s1)
-        print("a: ", self.a)
-        print("b: ", self.b)
-        print("c: ", self.c)
-        print("x3: ", self.x3)
-        print("E: ", self.currentError)
-        print("*" * 50)
+    def _reiniciarValores(self):
+        self._x0 = self._x1
+        self._x1 = self._x2
+        self._x2 = self._x3
+        self._x3 = 0
 
+    def _valores(self):
+        self._valoresImagen()
+        self._valoresHi()
+        self._valoresSigma()
+        self._valoresEcuacion()
+
+    def _valoresIteracion(self):
+        print("x0: ", self._x0, ", f(x0): ", self._fx0)
+        print("x1: ", self._x1, ", f(x1): ", self._fx1)
+        print("x2: ", self._x2, ", f(x2): ", self._fx2)
+        print("h0: ", self._h0)
+        print("h1: ", self._h1)
+        print("s0: ", self._s0)
+        print("s1: ", self._s1)
+        print("a: ", self._a)
+        print("b: ", self._b)
+        print("c: ", self._c)
+        print("x3: ", self._x3)
+        print("Error: ", self._errorActual)
+        print("_"*40)
+
+    def iteraciones(self):
+        self._fx = sympify(self._fx)
+        self._fx0 = self._fx.subs(self._x, self._x0)
+        self._fx1 = self._fx.subs(self._x, self._x1)
+        self._fx2 = self._fx.subs(self._x, self._x2)
+
+        xValues = np.array([self._x0, self._x1, self._x2])
+        fxValues = np.array([self._fx0, self._fx1, self._fx2])
+
+        dataDict = {
+                        "i": [],
+                        "x0": [],
+                        "x1": [],
+                        "x2": [],
+                        "x3": [],
+                        "E": []
+                    }
+
+        while self._errorActual > self._error:
+            self._iteracion += 1
+            self._valores()
+
+            if self._h1 == self._h0:
+                print("Esta función no se puede operar por medio de este método")
+                break
+
+            raiz = math.pow(self._b, 2) - 4 * self._a * self._c
+
+            if raiz < 0:
+                print("No se puede resolver esta ecuacion", self._iteracion)
+                break
+
+            d = sqrt(raiz)
+            e = 0
+
+            if abs(self._b + d) > abs(self._b - d):
+                e = self._b + d
+            else:
+                e = self._b - d
+
+            self._x3 = self._x2 - (2 * self._c) / e
+
+
+            if self._x3 == 0:
+                print("Esta función no se puede operar por medio de este método")
+                break
+
+            fx3 = self._fx.subs(self._x, self._x3)
+            xValues = np.append(xValues, self._x3)
+            fxValues = np.append(fxValues, fx3)
+
+            dataDict["i"].append(self._iteracion)
+            dataDict["x0"].append(self._x0)
+            dataDict["x1"].append(self._x1)
+            dataDict["x2"].append(self._x2)
+            dataDict["x3"].append(self._x3)
+
+            self._errorActual = abs((self._x3 - self._x2) / self._x3)
+
+            dataDict["E"].append(self._errorActual)
+
+            self._valoresIteracion()
+            self._reiniciarValores()
+
+        self.sendValues(xValues, fxValues)
+        self.showInfo(dataDict)
+
+    def sendValues(self, xValues, fxValues):
+
+        import graphics
+        g = graphics.Graphics(xValues, fxValues, self._fx)
+        g.createGraphics()
+
+    def showInfo(self, dataDict):
+
+        import showInfo as si
+        df = pd.DataFrame(dataDict)
+        s = si.ShowInfo(df)
+        s.showIterationsInfo()
 
 def main():
-    fx = input("Ingresa la función a evaluar (en términos de x): ")
-    x0 = float(input("Ingresa el valor de X0: "))
-    x1 = float(input("Ingresa el valor de X1: "))
-    x2 = float(input("Ingresa el valor de X2: "))
-    ex = float(input("Margen de error minimo permitido: "))
+    funcion = input("Ingrese la función a evaluar -> ")
+    x0 = float(input("Ingrese el valor de x0 -> "))
+    x1 = float(input("Ingrese el valor de x1 -> "))
+    x2 = float(input("Ingrese el valor de x2 -> "))
+    error = float(input("Ingrese el valor de error mínimo -> "))
 
-    m = Muller(fx, x0, x1, x2, ex)
-    m.findIterations()
+    muller = Muller(funcion, x0, x1, x2, error)
+    muller.iteraciones()
 
-if __name__ == '__main__':
-    main()
+
+main()

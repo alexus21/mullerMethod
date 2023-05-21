@@ -137,8 +137,9 @@ class Muller:
             self._valoresIteracion()
             self._reiniciarValores()
 
-        self.sendValues(xValues, fxValues)
         self.showInfo(dataDict)
+        self.sendValues(xValues, fxValues)
+
 
     def sendValues(self, xValues, fxValues):
 

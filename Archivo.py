@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+import pandas as pd
 from sympy import *
 
 class Muller:
@@ -81,6 +82,15 @@ class Muller:
         xValues = np.array([self._x0, self._x1, self._x2])
         fxValues = np.array([self._fx0, self._fx1, self._fx2])
 
+        dataDict = {
+                        "i": [],
+                        "x0": [],
+                        "x1": [],
+                        "x2": [],
+                        "x3": [],
+                        "E": []
+                    }
+
         while self._errorActual > self._error:
             self._iteracion += 1
             self._valores()
@@ -114,18 +124,36 @@ class Muller:
             xValues = np.append(xValues, self._x3)
             fxValues = np.append(fxValues, fx3)
 
+            dataDict["i"].append(self._iteracion)
+            dataDict["x0"].append(self._x0)
+            dataDict["x1"].append(self._x1)
+            dataDict["x2"].append(self._x2)
+            dataDict["x3"].append(self._x3)
+
             self._errorActual = abs((self._x3 - self._x2) / self._x3)
+
+            dataDict["E"].append(self._errorActual)
+
             self._valoresIteracion()
             self._reiniciarValores()
 
         print(xValues)
         print(fxValues)
         self.sendValues(xValues, fxValues)
+        self.showInfo(dataDict)
+
     def sendValues(self, xValues, fxValues):
 
         import graphics
         g = graphics.Graphics(xValues, fxValues, self._fx)
         g.createGraphics()
+
+    def showInfo(self, dataDict):
+
+        import showInfo as si
+        df = pd.DataFrame(dataDict)
+        s = si.ShowInfo(df)
+        s.showIterationsInfo()
 
 def main():
     funcion = input("Ingrese la función a evaluar -> ")

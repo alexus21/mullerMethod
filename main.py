@@ -91,18 +91,22 @@ class Muller:
                         "E": []
                     }
 
+        bandera = True
+
         while self._errorActual > self._error:
             self._iteracion += 1
             self._valores()
 
             if self._h1 == self._h0:
                 print("Esta función no se puede operar por medio de este método")
+                bandera = False
                 break
 
             raiz = math.pow(self._b, 2) - 4 * self._a * self._c
 
             if raiz < 0:
                 print("No se puede resolver esta ecuacion", self._iteracion)
+                bandera = False
                 break
 
             d = sqrt(raiz)
@@ -118,7 +122,8 @@ class Muller:
 
             if self._x3 == 0:
                 print("Esta función no se puede operar por medio de este método")
-                break
+                bandera = True
+
 
             fx3 = self._fx.subs(self._x, self._x3)
             xValues = np.append(xValues, self._x3)
@@ -137,14 +142,16 @@ class Muller:
             self._valoresIteracion()
             self._reiniciarValores()
 
-        self.sendValues(xValues, fxValues)
-        self.showInfo(dataDict)
+        if bandera:
+            self.sendValues(xValues, fxValues)
+            self.showInfo(dataDict)
 
     def sendValues(self, xValues, fxValues):
 
         import graphics
         g = graphics.Graphics(xValues, fxValues, self._fx)
-        g.createGraphics()
+        #g.createGraphics()
+        g.graficaEcuacion(self._fx)
 
     def showInfo(self, dataDict):
 

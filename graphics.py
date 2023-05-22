@@ -1,6 +1,10 @@
+# Desarrollado por:
+# - Ulloa Serpas, Hugo Alexander - US21003
+# - Vásquez Crespo, Ángel Gabriel - VC21007
+
 import matplotlib.pyplot as plt
 import numpy as np
-from sympy import *
+
 
 class Graphics:
     def __init__(self, xValues, yValues, fx):
@@ -10,7 +14,8 @@ class Graphics:
 
     def createGraphics(self):
         fig, graphics = plt.subplots()
-        x = np.linspace(min(self._x), max(self._x), 100)
+        #x = np.linspace(round(min(self._x, 0), 0), round(max(self._x), 0), 100)
+        x = np.linspace(float(round(np.amin(self._x, 0))), float(round(np.amax(self._x), 0)), 100)
         y = eval(self._fx)
 
         #Puntos que se acercan a la raiz:
@@ -25,43 +30,3 @@ class Graphics:
         plt.title(self._fx)
         plt.grid()
         plt.show()
-
-    def graficaEcuacion(self, funcion):
-
-        # Definir la función en Sympy
-        x = symbols('x')
-
-        raices = solve(funcion, x)
-
-        raices.sort()
-
-        rangoNumeros = 6
-        minimo = min(raices) - rangoNumeros if min(raices) <= 0 else + rangoNumeros
-        maximo = max(raices) + rangoNumeros
-
-        minimo = int(minimo)
-        maximo = int(maximo)
-
-        print(raices, type(minimo), maximo)
-
-        # Convertir la función de Sympy en una función numérica
-        funcion_numpy = lambdify(x, funcion, 'numpy')
-
-        # Crear un array de valores de x
-        x_vals = np.linspace(minimo, maximo)
-
-        # Evaluar la función en los valores de x
-        y_vals = funcion_numpy(x_vals)
-
-        # Graficar la función
-        plt.plot(x_vals, y_vals)
-        plt.xlabel('x')
-        plt.ylabel('f(x)')
-        plt.grid()
-        plt.title('Gráfico de la función')
-
-        for i in raices:
-            plt.plot(i, funcion.subs(x, i), "ro")
-
-        plt.show()
-        plt.close()

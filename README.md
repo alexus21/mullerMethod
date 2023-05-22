@@ -28,7 +28,7 @@ Desarrollado por:
 
 - Uso de numpy, pandas y sympy
 - Vista gráfica del resultado con matplotlib
-- Resolución de cualquier ecuación
+- Resolución de cualquier ecuación (gran ksak XDDDD)
 
 ## Previa
 ### Vista gráfica: 
